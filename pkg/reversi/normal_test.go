@@ -27,7 +27,7 @@ func TestNormalReversi(t *testing.T) {
 			}
 		}
 		t.Logf("Place Coordinate (%d, %d)\n", yPlace, xPlace)
-		tmp := reveriState.PlaceStone(yPlace, xPlace, reveriState.whoTurn)
+		tmp := reveriState.PlaceStone(yPlace, xPlace, reveriState.whoTurn, true)
 		t.Logf("Move Stones: %d\n", tmp)
 		for _, tmp := range reveriState.board {
 			t.Log(tmp)

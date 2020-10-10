@@ -1,6 +1,9 @@
 package reversi
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 /*
 Data is Reversi Core
@@ -118,7 +121,7 @@ func (data *Data) canPlaceByAgent(myStone int) bool {
 }
 
 // update data
-func (data *Data) turnProgress() {
+func (data *Data) turnProgress(actionAgent func(*Data, int, chan bool) bool) {
 	changeTurn := func() {
 		if data.whoTurn == 1 {
 			data.whoTurn = 2
@@ -126,11 +129,30 @@ func (data *Data) turnProgress() {
 			data.whoTurn = 1
 		}
 	}
-	data.countTurn++
-	for i := 0; i < 2; i++ {
+	cnt := 0
+	for {
 		changeTurn()
+		data.countTurn++
+		message := make(chan bool)
+		tmp := false
+		go func() {
+			time.Sleep(2 * time.Second)
+			message <- true
+		}()
 		if data.canPlaceByAgent(data.whoTurn) {
+			if actionAgent(data, 2, message) {
+				cnt = 0
+				tmp = true
+				continue
+			}
 			return
+		}
+		if !tmp {
+			<-message
+		}
+		cnt++
+		if cnt == 2 {
+			break
 		}
 	}
 	data.isGameEnd = true
@@ -138,7 +160,7 @@ func (data *Data) turnProgress() {
 
 // PlaceStone is Place a stone at the coordinates (y, x) and trun progresses
 // Returns over 0 when it can be placed.
-func (data *Data) PlaceStone(y, x, myStone int) int {
+func (data *Data) PlaceStone(y, x, myStone int, canStep bool) int {
 	if myStone != data.whoTurn {
 		return -1
 	}
@@ -148,6 +170,8 @@ func (data *Data) PlaceStone(y, x, myStone int) int {
 	}
 	cnt, _ := data.invertStone(y, x, myStone)
 	data.board[y][x] = myStone
-	data.turnProgress()
+	if canStep {
+		go data.turnProgress(RandomPlaceAgent)
+	}
 	return cnt + 1
 }

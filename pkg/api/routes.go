@@ -3,8 +3,6 @@ package api
 import (
 	"net/http"
 
-	"github.com/narakosen-festival-info-2020/reversi-back/pkg/reversi"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -43,7 +41,7 @@ func reversiRoute(engine *gin.Engine, server *Info) {
 			return
 		}
 		data, _ := server.getMatchData(specificCode)
-		response := data.PlaceStone(action.Y, action.X, 1)
+		response := data.PlaceStone(action.Y, action.X, 1, true)
 		if response == -1 {
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"error": "Cannot this action",
@@ -51,7 +49,6 @@ func reversiRoute(engine *gin.Engine, server *Info) {
 			return
 		}
 		ctx.JSON(http.StatusOK, data.GetJSON())
-		reversi.RandomPlaceAgent(data, 2)
 	})
 }
 

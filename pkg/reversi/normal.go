@@ -33,7 +33,7 @@ func GenerateNormalReversi() Data {
 
 // RandomPlaceAgent is Place a stone somewhere in the board where agent can place it.
 // Return true when agent do.
-func RandomPlaceAgent(data *Data, agent int) bool {
+func RandomPlaceAgent(data *Data, agent int, doPlace chan bool) bool {
 	if agent != data.whoTurn {
 		return false
 	}
@@ -54,6 +54,8 @@ func RandomPlaceAgent(data *Data, agent int) bool {
 		return false
 	}
 	sel := rand.Intn(len(actions))
-	data.PlaceStone(actions[sel].y, actions[sel].x, agent)
+	if <-doPlace {
+		data.PlaceStone(actions[sel].y, actions[sel].x, agent, false)
+	}
 	return true
 }
