@@ -11,7 +11,7 @@ type JSONData struct {
 	Board     [][]int `json:"board"`
 }
 
-// GetJSON is convert Data to DataJson
+// GetJSON is convert Data to JSONData
 func (data *Data) GetJSON() JSONData {
 	return JSONData{
 		BoardType: data.boardType,

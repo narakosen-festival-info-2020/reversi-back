@@ -1,9 +1,12 @@
 package reversi
 
+// NormalBoard is normal board type string
+const NormalBoard = "normal"
+
 // GenerateNormalReversi is Return the data of a normal Reversi board.
 func GenerateNormalReversi() Data {
 	ret := Data{
-		boardType: "normal",
+		boardType: NormalBoard,
 		height:    8,
 		width:     8,
 		countTurn: 1,

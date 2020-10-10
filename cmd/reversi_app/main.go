@@ -1,7 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"github.com/narakosen-festival-info-2020/reversi-back/pkg/api"
+)
 
 func main() {
-	fmt.Println("Anything")
+	api.SeedInit()
+	api.ServerUp()
 }
