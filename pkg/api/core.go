@@ -23,7 +23,6 @@ func (info *Info) generateCustomMatch(generateReversi func() reversi.Data) Token
 	nowToken := generateToken()
 	nowReversi := generateReversi()
 	info.matchInfo[nowToken.specificCode] = &nowReversi
-	fmt.Println(info.matchInfo[nowToken.specificCode])
 	info.tokenState = append(info.tokenState, nowToken)
 	return nowToken
 }
@@ -36,16 +35,18 @@ func (info *Info) generateMatch(boardType string) (Token, error) {
 }
 
 func (info *Info) eraseToken() {
-	for len(info.tokenState) != 0 {
-		if !info.tokenState[0].IsExpire() {
-			break
+	for {
+		for len(info.tokenState) != 0 {
+			if !info.tokenState[0].IsExpire() {
+				break
+			}
+			info.dataMutex.Lock()
+			delete(info.matchInfo, info.tokenState[0].specificCode)
+			info.tokenState = info.tokenState[1:]
+			info.dataMutex.Unlock()
 		}
-		info.dataMutex.Lock()
-		delete(info.matchInfo, info.tokenState[0].specificCode)
-		info.tokenState = info.tokenState[1:]
-		info.dataMutex.Unlock()
+		time.Sleep(time.Minute)
 	}
-	time.Sleep(time.Minute)
 }
 
 func (info *Info) getMatchData(specificCode string) (*reversi.Data, bool) {

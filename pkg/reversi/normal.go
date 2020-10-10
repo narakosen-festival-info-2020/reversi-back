@@ -1,5 +1,9 @@
 package reversi
 
+import (
+	"math/rand"
+)
+
 // NormalBoard is normal board type string
 const NormalBoard = "normal"
 
@@ -25,4 +29,31 @@ func GenerateNormalReversi() Data {
 		}
 	}
 	return ret
+}
+
+// RandomPlaceAgent is Place a stone somewhere in the board where agent can place it.
+// Return true when agent do.
+func RandomPlaceAgent(data *Data, agent int) bool {
+	if agent != data.whoTurn {
+		return false
+	}
+	type coordinate struct {
+		y int
+		x int
+	}
+	var actions []coordinate
+	for y := 0; y < 8; y++ {
+		for x := 0; x < 8; x++ {
+			tmp, _ := data.CanPlaceStone(y, x, agent)
+			if tmp {
+				actions = append(actions, coordinate{y, x})
+			}
+		}
+	}
+	if len(actions) == 0 {
+		return false
+	}
+	sel := rand.Intn(len(actions))
+	data.PlaceStone(actions[sel].y, actions[sel].x, agent)
+	return true
 }

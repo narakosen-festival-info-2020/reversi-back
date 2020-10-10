@@ -1,8 +1,9 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
+
+	"github.com/narakosen-festival-info-2020/reversi-back/pkg/reversi"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,12 +17,41 @@ func pingRoute(engine *gin.Engine, server *Info) {
 func reversiRoute(engine *gin.Engine, server *Info) {
 	reveriGroup := engine.Group("/api/reversi")
 	reveriGroup.Use(server.tokenCheck())
+
+	extract := func(ctx *gin.Context) string {
+		return ctx.GetHeader("Authorization")[7:]
+	}
+
 	reveriGroup.GET("/state", func(ctx *gin.Context) {
-		specificCode := ctx.GetHeader("Authorization")[7:]
-		data, tmp := server.getMatchData(specificCode)
-		fmt.Println(specificCode)
-		fmt.Println(tmp)
+		specificCode := extract(ctx) // before check by Middleware
+		data, _ := server.getMatchData(specificCode)
 		ctx.JSON(http.StatusOK, data.GetJSON())
+	})
+
+	type placeStone struct {
+		Y int `json:"y"`
+		X int `json:"x"`
+	}
+
+	reveriGroup.POST("/state/action", func(ctx *gin.Context) {
+		specificCode := extract(ctx)
+		var action placeStone
+		if err := ctx.ShouldBindJSON(&action); err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"error": "Bad Request",
+			})
+			return
+		}
+		data, _ := server.getMatchData(specificCode)
+		response := data.PlaceStone(action.Y, action.X, 1)
+		if response == -1 {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"error": "Cannot this action",
+			})
+			return
+		}
+		ctx.JSON(http.StatusOK, data.GetJSON())
+		reversi.RandomPlaceAgent(data, 2)
 	})
 }
 

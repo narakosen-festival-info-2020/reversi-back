@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -19,7 +18,6 @@ func (info *Info) tokenCheck() gin.HandlerFunc {
 		}
 		specificCode = specificCode[7:]
 		_, check := info.getMatchData(specificCode)
-		fmt.Println(specificCode)
 		if !check {
 			ctx.JSON(http.StatusForbidden, gin.H{
 				"error": "Forbidden",
