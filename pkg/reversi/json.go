@@ -8,6 +8,7 @@ type JSONData struct {
 	CountTurn int     `json:"count_turn"`
 	WhoTurn   int     `json:"who_turn"`
 	IsGameEnd bool    `json:"is_game_end"`
+	CanPlace  bool    `json:"can_place"`
 	Board     [][]int `json:"board"`
 }
 
@@ -20,6 +21,7 @@ func (data *Data) GetJSON() JSONData {
 		CountTurn: data.countTurn,
 		WhoTurn:   data.whoTurn,
 		IsGameEnd: data.isGameEnd,
+		CanPlace:  data.canPlace,
 		Board:     data.board,
 	}
 }

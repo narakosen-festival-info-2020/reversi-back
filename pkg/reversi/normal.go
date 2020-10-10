@@ -16,6 +16,7 @@ func GenerateNormalReversi() Data {
 		countTurn: 1,
 		whoTurn:   1,
 		isGameEnd: false,
+		canPlace:  true,
 		board:     make([][]int, 8),
 	}
 	for i := 0; i < 8; i++ {
@@ -54,7 +55,8 @@ func RandomPlaceAgent(data *Data, agent int, doPlace chan bool) bool {
 		return false
 	}
 	sel := rand.Intn(len(actions))
-	if <-doPlace {
+	tmp := <-doPlace
+	if tmp {
 		data.PlaceStone(actions[sel].y, actions[sel].x, agent, false)
 	}
 	return true

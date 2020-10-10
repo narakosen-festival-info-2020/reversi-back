@@ -3,6 +3,7 @@ package reversi
 import (
 	"math/rand"
 	"testing"
+	"time"
 )
 
 // WARN: I'm not going to test it at all !!
@@ -10,8 +11,13 @@ import (
 func TestNormalReversi(t *testing.T) {
 	reveriState := GenerateNormalReversi()
 	for !reveriState.isGameEnd {
+		time.Sleep(time.Second / 2)
 		t.Logf("Turn: %d\n", reveriState.countTurn)
 		t.Logf("Now Agent: %d\n", reveriState.whoTurn)
+		if reveriState.whoTurn != 1 || !reveriState.canPlace {
+			continue
+		}
+		rand.Seed(time.Now().Unix())
 		cnt := rand.Intn(7)
 		yPlace, xPlace := 0, 0
 		for y := 0; y < reveriState.height; y++ {
@@ -32,7 +38,7 @@ func TestNormalReversi(t *testing.T) {
 		for _, tmp := range reveriState.board {
 			t.Log(tmp)
 		}
-		if tmp <= 1 {
+		if tmp == 0 || tmp == 1 {
 			t.Fatalf("\nactuality： %d\nideal： over 2", tmp)
 		}
 	}

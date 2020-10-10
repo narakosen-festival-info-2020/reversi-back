@@ -16,6 +16,7 @@ type Data struct {
 	countTurn int
 	whoTurn   int
 	isGameEnd bool
+	canPlace  bool
 	board     [][]int
 }
 
@@ -140,6 +141,7 @@ func (data *Data) turnProgress(actionAgent func(*Data, int, chan bool) bool) {
 			message <- true
 		}()
 		if data.canPlaceByAgent(data.whoTurn) {
+			data.canPlace = true
 			if actionAgent(data, 2, message) {
 				cnt = 0
 				tmp = true
@@ -147,6 +149,7 @@ func (data *Data) turnProgress(actionAgent func(*Data, int, chan bool) bool) {
 			}
 			return
 		}
+		data.canPlace = false
 		if !tmp {
 			<-message
 		}
@@ -161,7 +164,7 @@ func (data *Data) turnProgress(actionAgent func(*Data, int, chan bool) bool) {
 // PlaceStone is Place a stone at the coordinates (y, x) and trun progresses
 // Returns over 0 when it can be placed.
 func (data *Data) PlaceStone(y, x, myStone int, canStep bool) int {
-	if myStone != data.whoTurn {
+	if myStone != data.whoTurn || !data.canPlace {
 		return -1
 	}
 	check, _ := data.CanPlaceStone(y, x, myStone)
