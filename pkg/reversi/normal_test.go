@@ -9,7 +9,7 @@ import (
 
 func TestNormalReversi(t *testing.T) {
 	reveriState := GenerateNormalReversi()
-	for !reveriState.IsGameEnd {
+	for !reveriState.isGameEnd {
 		t.Logf("Turn: %d\n", reveriState.countTurn)
 		t.Logf("Now Agent: %d\n", reveriState.whoTurn)
 		cnt := rand.Intn(7)

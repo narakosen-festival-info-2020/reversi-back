@@ -7,12 +7,12 @@ Data is Reversi Core
 Black Stone: 1, White Stone: 2, Nothing: 0, Wall: -1
 */
 type Data struct {
-	boardType int
+	boardType string
 	height    int
 	width     int
 	countTurn int
 	whoTurn   int
-	IsGameEnd bool
+	isGameEnd bool
 	board     [][]int
 }
 
@@ -133,7 +133,7 @@ func (data *Data) turnProgress() {
 			return
 		}
 	}
-	data.IsGameEnd = true
+	data.isGameEnd = true
 }
 
 // PlaceStone is Place a stone at the coordinates (y, x) and trun progresses

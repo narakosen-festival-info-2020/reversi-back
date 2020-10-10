@@ -3,12 +3,12 @@ package reversi
 // GenerateNormalReversi is Return the data of a normal Reversi board.
 func GenerateNormalReversi() Data {
 	ret := Data{
-		boardType: 1,
+		boardType: "normal",
 		height:    8,
 		width:     8,
 		countTurn: 1,
 		whoTurn:   1,
-		IsGameEnd: false,
+		isGameEnd: false,
 		board:     make([][]int, 8),
 	}
 	for i := 0; i < 8; i++ {
