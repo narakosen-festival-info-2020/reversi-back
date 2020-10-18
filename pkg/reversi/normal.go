@@ -43,8 +43,8 @@ func RandomPlaceAgent(data *Data, agent int, doPlace chan bool) bool {
 		x int
 	}
 	var actions []coordinate
-	for y := 0; y < 8; y++ {
-		for x := 0; x < 8; x++ {
+	for y := 0; y < data.height; y++ {
+		for x := 0; x < data.width; x++ {
 			tmp, _ := data.CanPlaceStone(y, x, agent)
 			if tmp {
 				actions = append(actions, coordinate{y, x})
