@@ -7,8 +7,8 @@ import (
 // NormalBoard is normal board type string
 const NormalBoard = "normal"
 
-// GenerateNormalReversi is Return the data of a normal Reversi board.
-func GenerateNormalReversi() Data {
+// CreateNormalReversi is Return the data of a normal Reversi board.
+func CreateNormalReversi() Data {
 	ret := Data{
 		boardType: NormalBoard,
 		height:    8,

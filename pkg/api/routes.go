@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/narakosen-festival-info-2020/reversi-back/pkg/reversi"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -53,18 +55,15 @@ func reversiRoute(engine *gin.Engine, server *Info) {
 }
 
 func generateMatchRoute(engine *gin.Engine, server *Info) {
-	type request struct {
-		BoardType string `json:"board_type"`
-	}
 	engine.POST("/api/generate", func(ctx *gin.Context) {
-		var req request
+		var req reversi.GenerateData
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"error": "Bad Request",
 			})
 			return
 		}
-		check, err := server.generateMatch(req.BoardType)
+		check, err := server.generateMatch(&req)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),

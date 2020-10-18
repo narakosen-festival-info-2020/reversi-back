@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
@@ -17,21 +16,21 @@ type Info struct {
 	dataMutex    sync.Mutex
 }
 
-func (info *Info) generateCustomMatch(generateReversi func() reversi.Data) Token {
+func (info *Info) generateCustomMatch(generateReversi func() (reversi.Data, error)) (Token, error) {
 	info.dataMutex.Lock()
 	defer info.dataMutex.Unlock()
+	nowReversi, err := generateReversi()
+	if err != nil {
+		return Token{}, err
+	}
 	nowToken := generateToken()
-	nowReversi := generateReversi()
 	info.matchInfo[nowToken.specificCode] = &nowReversi
 	info.tokenState = append(info.tokenState, nowToken)
-	return nowToken
+	return nowToken, nil
 }
 
-func (info *Info) generateMatch(boardType string) (Token, error) {
-	if boardType == reversi.NormalBoard {
-		return info.generateCustomMatch(reversi.GenerateNormalReversi), nil
-	}
-	return Token{}, fmt.Errorf("Invalid Board Type")
+func (info *Info) generateMatch(generateData *reversi.GenerateData) (Token, error) {
+	return info.generateCustomMatch(generateData.Create)
 }
 
 func (info *Info) eraseToken() {
