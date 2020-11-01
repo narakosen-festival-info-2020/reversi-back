@@ -15,7 +15,7 @@ func pingRoute(engine *gin.Engine, server *Info) {
 }
 
 func reversiRoute(engine *gin.Engine, server *Info) {
-	reveriGroup := engine.Group("/api/reversi")
+	reveriGroup := engine.Group("/reversi")
 	reveriGroup.Use(server.tokenCheck())
 
 	extract := func(ctx *gin.Context) string {
@@ -55,7 +55,7 @@ func reversiRoute(engine *gin.Engine, server *Info) {
 }
 
 func generateMatchRoute(engine *gin.Engine, server *Info) {
-	engine.POST("/api/generate", func(ctx *gin.Context) {
+	engine.POST("/generate", func(ctx *gin.Context) {
 		var req reversi.GenerateData
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{

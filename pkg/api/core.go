@@ -4,6 +4,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/narakosen-festival-info-2020/reversi-back/pkg/reversi"
 )
@@ -62,8 +63,23 @@ func ServerUp() {
 		serverUpTime: time.Now(),
 		matchInfo:    make(map[string]*reversi.Data),
 	}
-	router := gin.Default()
+	server := gin.Default()
+
+	// CORS setup
+	server.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"https://reversi.nitncfes.net"},
+		AllowMethods: []string{"GET", "POST"},
+		AllowHeaders: []string{
+			"Origin",
+			"Content-Type",
+			"Content-Length",
+			"Authorization",
+		},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+
 	go serverInfo.eraseToken()
-	setRoute(router, &serverInfo)
-	router.Run(":80")
+	setRoute(server, &serverInfo)
+	server.Run(":80")
 }
