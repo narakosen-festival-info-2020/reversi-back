@@ -9,7 +9,7 @@ import (
 // WARN: I'm not going to test it at all !!
 
 func TestNormalReversi(t *testing.T) {
-	reveriState := GenerateNormalReversi()
+	reveriState := createNormalReversi()
 	for !reveriState.isGameEnd {
 		time.Sleep(time.Second / 2)
 		t.Logf("Turn: %d\n", reveriState.countTurn)

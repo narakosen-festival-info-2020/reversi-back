@@ -1,16 +1,27 @@
 NAME=reversi-back
-VERSION=1.0
+DEVNAME=reversi-back-dev
+VERSION=1.1
 
-.PHONY: build
+dev-image:
+	DOCKER_BUILDKIT=1 docker build -f ./build/Dockerfile --target develop -t $(DEVNAME):$(VERSION) .
 
-build:
-	DOCKER_BUILDKIT=1 docker build --secret id=credential,src=.gitconfig ./build -t $(NAME):$(VERSION)
+dev-run:
+	docker run -itd -p 80:80 --name $(DEVNAME) $(DEVNAME):$(VERSION)
 
-start:
+dev-stop:
+	docker rm -f $(DEVNAME)
+
+dev-logs:
+	docker logs $(DEVNAME)
+
+main-image:
+	DOCKER_BUILDKIT=1 docker build --secret id=credential,src=./build/.gitconfig --target main -f ./build/Dockerfile -t $(NAME):$(VERSION) .
+
+main-start:
 	docker run -itd -p 80:80 --name $(NAME) $(NAME):$(VERSION)
 
-stop:
+main-stop:
 	docker rm -f $(NAME)
 
-logs:
+main-logs:
 	docker logs $(NAME)

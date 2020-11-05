@@ -1,0 +1,2 @@
+[url "https://hogehoge:x-oauth-basic@github.com/"]
+insteadOf = "https://github.com"

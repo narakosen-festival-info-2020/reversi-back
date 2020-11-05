@@ -1,10 +1,10 @@
 package api
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/narakosen-festival-info-2020/reversi-back/pkg/reversi"
 )
@@ -17,21 +17,21 @@ type Info struct {
 	dataMutex    sync.Mutex
 }
 
-func (info *Info) generateCustomMatch(generateReversi func() reversi.Data) Token {
+func (info *Info) generateCustomMatch(generateReversi func() (reversi.Data, error)) (Token, error) {
 	info.dataMutex.Lock()
 	defer info.dataMutex.Unlock()
+	nowReversi, err := generateReversi()
+	if err != nil {
+		return Token{}, err
+	}
 	nowToken := generateToken()
-	nowReversi := generateReversi()
 	info.matchInfo[nowToken.specificCode] = &nowReversi
 	info.tokenState = append(info.tokenState, nowToken)
-	return nowToken
+	return nowToken, nil
 }
 
-func (info *Info) generateMatch(boardType string) (Token, error) {
-	if boardType == reversi.NormalBoard {
-		return info.generateCustomMatch(reversi.GenerateNormalReversi), nil
-	}
-	return Token{}, fmt.Errorf("Invalid Board Type")
+func (info *Info) generateMatch(generateData *reversi.GenerateData) (Token, error) {
+	return info.generateCustomMatch(generateData.Create)
 }
 
 func (info *Info) eraseToken() {
@@ -63,8 +63,23 @@ func ServerUp() {
 		serverUpTime: time.Now(),
 		matchInfo:    make(map[string]*reversi.Data),
 	}
-	router := gin.Default()
+	server := gin.Default()
+
+	// CORS setup
+	server.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"https://reversi.nitncfes.net"},
+		AllowMethods: []string{"GET", "POST"},
+		AllowHeaders: []string{
+			"Origin",
+			"Content-Type",
+			"Content-Length",
+			"Authorization",
+		},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+
 	go serverInfo.eraseToken()
-	setRoute(router, &serverInfo)
-	router.Run(":80")
+	setRoute(server, &serverInfo)
+	server.Run(":80")
 }
